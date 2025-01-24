@@ -29,11 +29,11 @@ on:
       ipa_url:
         required: true
         type: string
-      is_testflight:
-        required: true
-        type: boolean
       release:
         default: true
+        type: boolean
+      is_testflight:
+        required: true
         type: boolean
       add_extension:
         default: true
@@ -54,6 +54,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Download Tweak
         if: github.event.inputs.caller_workflow != 'ci'
@@ -76,6 +78,8 @@ jobs:
 
           if [ "$release_version" = "$control_version" ]; then
             echo "Versions match. Downloading DEB files..."
+            mkdir -p packages
+            cd packages
             echo "$release_info" | jq -r '.assets[] | select(.name | endswith("arm64.deb")) | .browser_download_url' | xargs -I {} curl -L -O {}
             echo "DEB_DOWNLOADED=true" >> $GITHUB_ENV
           else
@@ -108,19 +112,11 @@ jobs:
         if: env.DEB_DOWNLOADED == 'false'
         run: make package
 
-      - name: Set DEB path
-        run: |
-          if [ "${{ env.DEB_DOWNLOADED }}" == "true" ]; then
-            echo "ROOTLESS_DEB_PATH=*-arm64.deb" >> $GITHUB_ENV
-          else
-            echo "ROOTLESS_DEB_PATH=packages/*-arm64.deb" >> $GITHUB_ENV
-          fi
-
       - name: Upload rootless package
         uses: actions/upload-artifact@v4
         with:
           name: rootless package
-          path: ${{ env.ROOTLESS_DEB_PATH }}
+          path: packages/*-arm64.deb
 
   build-ipa:
     if: github.event.inputs.caller_workflow != 'ci'
@@ -174,11 +170,12 @@ jobs:
           echo "ROOTLESS_DEB=$ROOTLESS_DEB" >> $GITHUB_ENV
           echo "APP_NAME=$NAME" >> $GITHUB_ENV
 
-      - name: Run patcher
-        run: |
-          curl -L -o patcher https://github.com/unbound-mod/patcher/releases/latest/download/patcher.mac-amd64
-          chmod +x patcher
-          ./patcher discord.ipa
+    # no releases yet
+    #   - name: Run patcher
+    #     run: |
+    #       curl -L -o patcher https://github.com/unbound-mod/patcher-ios/releases/latest/download/patcher.mac-amd64
+    #       chmod +x patcher
+    #       ./patcher discord.ipa
 
       - name: Install cyan
         run: pip install --force-reinstall https://github.com/asdfzxcvbn/pyzule-rw/archive/main.zip Pillow
@@ -265,6 +262,7 @@ jobs:
         run: |
           NAME=$(grep '^Name:' control | cut -d ' ' -f 2)
           echo "APP_NAME=$NAME" >> $GITHUB_ENV
+
       - name: Download IPA artifact
         uses: actions/download-artifact@v4
         with:
