@@ -179,6 +179,13 @@ jobs:
       - name: Install cyan
         run: pip install --force-reinstall https://github.com/asdfzxcvbn/pyzule-rw/archive/main.zip Pillow
 
+      - name: Debug - List Files
+        run: |
+          echo "=== Current Directory ==="
+          ls -la
+          echo -e "\n=== Patcher Directory ==="
+          ls -la patcher-ios/
+
       - name: Inject tweak (and extension)
         run: |
           if [ ${{ inputs.add_extension }} == true ]; then
