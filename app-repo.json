@@ -22,7 +22,14 @@
       "localizedDescription": "A client mod for Discord (TestFlight builds)",
       "subtitle": "A client mod for Discord (TestFlight builds)",
       "tintColor": "aa454d",
-      "versions": [],
+      "versions": [
+        {
+          "version": "265.0_70721",
+          "date": "2025-01-26",
+          "size": 88686676,
+          "downloadURL": "https://github.com/castdrian/unbound-tweak/releases/download/v265.0_70721/Unbound.ipa"
+        }
+      ],
       "appPermissions": {}
     }
   ],
