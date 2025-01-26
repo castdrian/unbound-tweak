@@ -143,7 +143,7 @@ jobs:
         run: |
           cd patcher-ios
           go build -o patcher
-          ./patcher ../discord.ipa
+          ./patcher ${{ github.workspace }}/discord.ipa
 
       - name: Clone OpenInDiscord
         if: inputs.add_extension == true
