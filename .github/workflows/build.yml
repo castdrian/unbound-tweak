@@ -182,9 +182,9 @@ jobs:
       - name: Inject tweak (and extension)
         run: |
           if [ ${{ inputs.add_extension }} == true ]; then
-            yes | cyan -duwsgq -i discord.ipa -o ${{ env.APP_NAME }}.ipa -f *.deb OpenInDiscord/build/OpenInDiscord.appex
+            yes | cyan -duwsgq -i ${{ env.APP_NAME }}.ipa -o ${{ env.APP_NAME }}.ipa -f *.deb OpenInDiscord/build/OpenInDiscord.appex
           else
-            yes | cyan -duwsgq -i discord.ipa -o ${{ env.APP_NAME }}.ipa -f *.deb
+            yes | cyan -duwsgq -i ${{ env.APP_NAME }}.ipa -o ${{ env.APP_NAME }}.ipa -f *.deb
           fi
 
       - name: Upload ipa as artifact
